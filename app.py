@@ -49,7 +49,7 @@ if "refined" not in st.session_state:
     st.session_state.refined = None
 
 # ---------------------------
-# FORMAT FUNCTION
+# FORMAT FUNCTION (FINAL FIX)
 # ---------------------------
 def format_text(text):
     text = text.replace("**", "").replace("*", "")
@@ -60,8 +60,11 @@ def format_text(text):
     for line in lines:
         line = line.strip()
 
+        # SMALL CLEAN STEP HEADING
         if line.lower().startswith("step"):
-            html += f"<h3 style='margin-top:20px; color:#38bdf8;'>{line}</h3>"
+            html += f"<p style='margin-top:12px; color:#38bdf8; font-size:18px; font-weight:600;'>{line}</p>"
+
+        # NORMAL TEXT
         elif line:
             html += f"<p style='margin:6px 0;'>{line}</p>"
 
