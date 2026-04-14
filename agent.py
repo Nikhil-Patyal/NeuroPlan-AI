@@ -1,114 +1,81 @@
-import requests
-import json
+from groq import Groq
+import os
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # ---------------------------
-# CALL OLLAMA (MISTRAL)
+# CALL FUNCTION
 # ---------------------------
 def call(prompt):
-    url = "http://localhost:11434/api/generate"
-
-    response = requests.post(url, json={
-        "model": "mistral",
-        "prompt": prompt,
-        "stream": False,
-        "options": {
-            "num_predict": 150,
-            "temperature": 0.7
-        }
-    })
-
-    return response.json()["response"].strip()
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "user", "content": prompt.strip()}
+            ],
+            temperature=0.7,
+            max_tokens=500
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 
 # ---------------------------
-# TOOLS
+# MAIN AGENT (SAME FLOW, BETTER QUALITY)
 # ---------------------------
+def run_neuroplan(problem):
 
-def generate_plan(user_input):
-    prompt = f"""
-    Create a short, structured step-by-step plan for:
-    {user_input}
+    steps = []
 
-    Keep it simple and practical.
-    """
-    return call(prompt)
+    # STEP 1: Initial Solution
+    initial = call(f"""
+    Solve this problem with:
+    - Clear steps
+    - Explanation
+    - Simple language
 
+    Problem: {problem}
+    """)
+    steps.append(("⚙️ Initial Solution", initial))
 
-def refine_plan(plan, feedback):
-    prompt = f"""
-    Improve this plan:
+    # STEP 2: Evaluation (STRONGER FEEDBACK)
+    evaluation = call(f"""
+    Evaluate this solution deeply:
+    - What is correct?
+    - What is missing?
+    - What can be improved?
 
-    Plan:
-    {plan}
+    {initial}
+    """)
+    steps.append(("🔍 Evaluation", evaluation))
+
+    # STEP 3: Improved Solution (SMARTER)
+    improved = call(f"""
+    Improve this solution using the feedback:
+    - Fix mistakes
+    - Add missing parts
+    - Make it more detailed
+
+    Original:
+    {initial}
 
     Feedback:
-    {feedback}
+    {evaluation}
+    """)
+    steps.append(("✨ Improved Solution", improved))
 
-    Make it better and simpler.
-    """
-    return call(prompt)
+    # STEP 4: Final Answer (BEST VERSION)
+    final = call(f"""
+    Create final answer:
+    - Well structured
+    - Use headings
+    - Use bullet points
+    - Easy to read
+    - Complete explanation
 
+    {improved}
+    """)
+    steps.append(("✅ Final Answer", final))
 
-def create_schedule(goal):
-    prompt = f"""
-    Create a simple daily schedule for:
-    {goal}
-
-    Keep it realistic.
-    """
-    return call(prompt)
-
-
-# ---------------------------
-# AGENT DECISION (JSON OUTPUT)
-# ---------------------------
-def agent_decide(user_input):
-    prompt = f"""
-    You are an AI agent.
-
-    Decide the best action for this input:
-    {user_input}
-
-    Available tools:
-    - generate_plan
-    - refine_plan
-    - create_schedule
-
-    Respond ONLY in JSON format like:
-    {{"tool": "tool_name"}}
-    """
-
-    response = call(prompt)
-
-    try:
-        decision = json.loads(response)
-        return decision.get("tool", "generate_plan")
-    except:
-        return "generate_plan"
-
-
-# ---------------------------
-# MAIN AGENT
-# ---------------------------
-def run_agent(user_input, previous_plan=None):
-    tool = agent_decide(user_input)
-
-    if tool == "refine_plan" and previous_plan:
-        result = refine_plan(previous_plan, user_input)
-
-    elif tool == "create_schedule":
-        result = create_schedule(user_input)
-
-    else:
-        result = generate_plan(user_input)
-
-    save_history(user_input, result, tool)
-    return result, tool
-
-
-# ---------------------------
-# MEMORY
-# ---------------------------
-def save_history(user_input, output, tool):
-    with open("history.txt", "a") as f:
-        f.write(f"USER: {user_input}\nTOOL: {tool}\nOUTPUT: {output}\n\n")
+    return steps, final

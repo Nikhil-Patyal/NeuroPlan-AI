@@ -233,3 +233,43 @@ OUTPUT: Title: Master AI Basics in 8 Weeks - A Beginner-Friendly Roadmap
 2. **Week 2 - Foundations of Machine Learning**
    - Explore supervised learning and unsupervised
 
+USER: i want to learn python in 2 month
+TOOL: generate_plan
+OUTPUT: Title: Python Learning Plan - 2 Months
+
+1. **Week 1 & 2:** Introduction to Python and Basic Syntax
+   - Day 1-3: Install Python, Integrated Development Environment (IDE) setup (PyCharm or Visual Studio Code recommended).
+   - Day 4-7: Understand Python variables, data types, operators, and basic arithmetic operations.
+   - Day 8-10: Learn control structures such as if-else statements, for loops, and while loops.
+   - Day 11-14: Study functions and modules, including how to define, call, and use built-in functions.
+   - Day 15:
+
+USER: too diificult
+TOOL: refine_plan
+OUTPUT: Title: Python Beginner's Learning Plan - 2 Weeks (Beginner Friendly)
+
+1. **Week 1:** Python Basics and Syntax Introduction
+   - Day 1-2: Install Python, Set up your preferred Integrated Development Environment (IDE) such as Thonny or Trinket.
+   - Day 3-4: Understand Python variables, data types, and basic arithmetic operations.
+   - Day 5-6: Learn control structures like if-else statements and for loops.
+   - Day 7: Practice exercises to reinforce concepts learned so far.
+
+2. **Week 2:** Building Blocks and Next Steps in Python
+
+USER: learn ai in 2 months
+TOOL: generate_plan
+OUTPUT: Title: Learning AI in 2 Months: A Practical Guide
+
+Month 1: Foundations and Basics
+
+Week 1: Mathematics Prerequisites
+1.1. Familiarize with Linear Algebra (Matrices, Vectors, Determinants)
+   - Online Resources: Khan Academy, MIT OpenCourseWare
+
+1.2. Probability Theory and Statistics
+   - Online Resources: Coursera's "Probability for Machine Learning" by Andrew Ng
+
+Week 2: Programming and Tools
+2.1. Brush up on Python (if not already proficient)
+   - Online Resources: Codecademy,
+
