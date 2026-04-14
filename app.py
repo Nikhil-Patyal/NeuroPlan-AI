@@ -5,7 +5,7 @@ from agent import generate_plan, refine_plan
 st.set_page_config(page_title="NeuroPlan AI", layout="wide")
 
 # ---------------------------
-# 🎨 UI STYLE
+# 🎨 UI STYLE (FINAL POLISH)
 # ---------------------------
 st.markdown("""
 <style>
@@ -17,19 +17,35 @@ html, body {
     color: white;
 }
 
+/* Title */
 .title {
     font-size: 42px;
     font-weight: 600;
 }
 
+/* Card */
 .card {
     background: rgba(255,255,255,0.05);
-    padding: 20px;
+    padding: 22px;
     border-radius: 14px;
-    margin-top: 20px;
+    margin-top: 25px;
     font-size: 16px;
-    line-height: 1.8;
+    line-height: 1.9;
 }
+
+/* Divider */
+.divider {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    margin: 16px 0;
+}
+
+/* Text spacing */
+.text {
+    margin: 8px 0;
+    color: #e5e7eb;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -49,7 +65,7 @@ if "refined" not in st.session_state:
     st.session_state.refined = None
 
 # ---------------------------
-# FORMAT FUNCTION (FINAL FIX)
+# FORMAT FUNCTION (CHATGPT STYLE)
 # ---------------------------
 def format_text(text):
     text = text.replace("**", "").replace("*", "")
@@ -60,13 +76,14 @@ def format_text(text):
     for line in lines:
         line = line.strip()
 
-        # SMALL CLEAN STEP HEADING
+        # STEP HEADING
         if line.lower().startswith("step"):
-            html += f"<p style='margin-top:12px; color:#38bdf8; font-size:18px; font-weight:600;'>{line}</p>"
+            html += f"<div class='divider'></div>"
+            html += f"<p style='margin-top:10px; color:#38bdf8; font-size:18px; font-weight:600;'>{line}</p>"
 
         # NORMAL TEXT
         elif line:
-            html += f"<p style='margin:6px 0;'>{line}</p>"
+            html += f"<p class='text'>{line}</p>"
 
     return f"<div>{html}</div>"
 
