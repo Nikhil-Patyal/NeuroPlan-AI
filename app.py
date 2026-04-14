@@ -1,36 +1,118 @@
 import streamlit as st
-from agent import run_neuroplan
+from agent import generate_plan, refine_plan
 
 st.set_page_config(page_title="NeuroPlan AI", layout="wide")
 
-st.title("🧠 NeuroPlan AI")
-st.caption("Context-Aware Recommendation System")
+# ---------------------------
+# 🎨 MODERN UI
+# ---------------------------
+st.markdown("""
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Background */
+body {
+    background: linear-gradient(135deg, #0f172a, #020617);
+    color: white;
+}
+
+/* Title */
+.title {
+    font-size: 42px;
+    font-weight: 600;
+}
+
+/* Cards */
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 16px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border-left: 6px solid #3b82f6;
+}
+
+/* Buttons */
+.stButton>button {
+    border-radius: 10px;
+    padding: 8px 16px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------------------
+# TITLE
+# ---------------------------
+st.markdown("<div class='title'>🧠 NeuroPlan AI</div>", unsafe_allow_html=True)
+st.caption("AI Planner with Feedback Optimization")
+
+# ---------------------------
+# SESSION STATE
+# ---------------------------
+if "plan" not in st.session_state:
+    st.session_state.plan = None
+
+if "refined" not in st.session_state:
+    st.session_state.refined = None
 
 # ---------------------------
 # INPUT
 # ---------------------------
-user_input = st.text_area("Enter your goal:")
-
-if st.button("Generate Plan"):
-
-    with st.spinner("Generating detailed plan..."):
-        context, plan = run_neuroplan(user_input)
-
-    st.subheader("📌 Context Analysis")
-    st.write(context)
-
-    st.subheader("📋 Generated Plan (~800 words)")
-    st.write(plan)
+goal = st.text_area("Enter your goal:")
 
 # ---------------------------
-# FEEDBACK
+# GENERATE PLAN
 # ---------------------------
-feedback = st.text_input("Give feedback to improve plan:")
+if st.button("🚀 Generate Plan"):
 
-if st.button("Refine Plan"):
+    if goal:
+        with st.spinner("Generating plan..."):
+            st.session_state.plan = generate_plan(goal)
+            st.session_state.refined = None
 
-    with st.spinner("Refining..."):
-        _, improved = run_neuroplan(user_input, feedback)
+# ---------------------------
+# SHOW INITIAL PLAN
+# ---------------------------
+if st.session_state.plan:
 
-    st.subheader("✅ Improved Plan")
-    st.write(improved)
+    st.markdown(f"""
+    <div class="card" style="border-left:6px solid #f59e0b;">
+    <h4>⚙️ Initial Plan</h4>
+    <p>{st.session_state.plan.replace("\n","<br>")}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ---------------------------
+    # FEEDBACK INPUT
+    # ---------------------------
+    feedback = st.text_input("Give feedback to improve plan:")
+
+    # ---------------------------
+    # REFINE BUTTON
+    # ---------------------------
+    if st.button("✨ Refine Plan"):
+
+        if feedback:
+            with st.spinner("Refining plan..."):
+                st.session_state.refined = refine_plan(
+                    goal,
+                    st.session_state.plan,
+                    feedback
+                )
+
+# ---------------------------
+# SHOW REFINED PLAN
+# ---------------------------
+if st.session_state.refined:
+
+    st.markdown(f"""
+    <div class="card" style="border-left:6px solid #10b981;">
+    <h4>✅ Refined Plan</h4>
+    <p>{st.session_state.refined.replace("\n","<br>")}</p>
+    </div>
+    """, unsafe_allow_html=True)
