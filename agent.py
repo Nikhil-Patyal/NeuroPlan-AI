@@ -12,7 +12,7 @@ def call(prompt):
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt.strip()}],
             temperature=0.7,
-            max_tokens=500
+            max_tokens=2500
         )
         return response.choices[0].message.content
     except Exception as e:
