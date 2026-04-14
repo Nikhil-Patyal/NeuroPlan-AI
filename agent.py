@@ -27,19 +27,17 @@ def generate_plan(goal):
 Create a clean and natural plan.
 
 STRICT RULES:
-- Do NOT use *, **, # or any symbols
-- Do NOT use markdown or bold text
+- Do NOT use *, **, # or markdown
 - Use plain text only
-- Format exactly like:
+- Format like:
 
 Step 1: Title
-Explanation in simple lines
+Explanation
 
 Step 2: Title
-Explanation...
+Explanation
 
-- Use bullet points ONLY if really needed using "-"
-- Keep it clean and readable like ChatGPT
+- Keep it readable like ChatGPT
 
 Goal:
 {goal}
@@ -54,8 +52,8 @@ def refine_plan(goal, initial_plan, feedback):
 Improve this plan using feedback.
 
 STRICT RULES:
-- No *, **, # or markdown
-- Plain clean text only
+- No *, **, # symbols
+- Plain text only
 - Use format:
 
 Step 1: Title

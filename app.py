@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from agent import generate_plan, refine_plan
 
 st.set_page_config(page_title="NeuroPlan AI", layout="wide")
@@ -29,11 +30,6 @@ html, body {
     font-size: 16px;
     line-height: 1.8;
 }
-
-.stButton>button {
-    border-radius: 10px;
-    padding: 8px 16px;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -56,7 +52,6 @@ if "refined" not in st.session_state:
 # FORMAT FUNCTION
 # ---------------------------
 def format_text(text):
-    # remove unwanted symbols if model still gives them
     text = text.replace("**", "").replace("*", "")
 
     lines = text.split("\n")
@@ -65,19 +60,24 @@ def format_text(text):
     for line in lines:
         line = line.strip()
 
-        # Step headings
         if line.lower().startswith("step"):
             html += f"<h3 style='margin-top:20px; color:#38bdf8;'>{line}</h3>"
-
-        # bullets
-        elif line.startswith("-"):
-            html += f"<li>{line[1:].strip()}</li>"
-
-        # normal text
         elif line:
             html += f"<p style='margin:6px 0;'>{line}</p>"
 
     return f"<div>{html}</div>"
+
+# ---------------------------
+# TYPING EFFECT
+# ---------------------------
+def typing_effect(text):
+    placeholder = st.empty()
+    output = ""
+
+    for char in text:
+        output += char
+        placeholder.markdown(output, unsafe_allow_html=True)
+        time.sleep(0.002)
 
 # ---------------------------
 # INPUT
@@ -99,12 +99,12 @@ if st.button("🚀 Generate Plan"):
 # ---------------------------
 if st.session_state.plan:
 
-    st.markdown(f"""
-    <div class="card" style="border-left:6px solid #f59e0b;">
-    <h4>⚙️ Initial Plan</h4>
-    {format_text(st.session_state.plan)}
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("<div class='card' style='border-left:6px solid #f59e0b;'>", unsafe_allow_html=True)
+    st.markdown("<h4>⚙️ Initial Plan</h4>", unsafe_allow_html=True)
+
+    typing_effect(format_text(st.session_state.plan))
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
     feedback = st.text_input("Give feedback to improve plan:")
 
@@ -123,10 +123,9 @@ if st.session_state.plan:
 # ---------------------------
 if st.session_state.refined:
 
-    st.markdown(f"""
-    <div class="card" style="border-left:6px solid #10b981;">
-    <h4>✅ Refined Plan</h4>
-    {format_text(st.session_state.refined)}
-    </div>
-    
-    """, unsafe_allow_html=True)
+    st.markdown("<div class='card' style='border-left:6px solid #10b981;'>", unsafe_allow_html=True)
+    st.markdown("<h4>✅ Refined Plan</h4>", unsafe_allow_html=True)
+
+    typing_effect(format_text(st.session_state.refined))
+
+    st.markdown("</div>", unsafe_allow_html=True)
