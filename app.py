@@ -1,122 +1,119 @@
 import streamlit as st
-from agent import generate_plan, refine_plan
+from agent import *
 
-st.set_page_config(page_title="NeuroPlan AI", layout="wide")
+st.set_page_config(page_title="ReflexMind AI", layout="wide")
 
 # ---------------------------
-# 🎨 UI STYLE
+# 🎨 PREMIUM UI STYLE
 # ---------------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 
-html, body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #0f172a, #020617);
+/* Background Gradient */
+body {
+    background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+}
+
+/* Title */
+.title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: bold;
+    color: #0f172a;
+}
+
+.subtitle {
+    text-align: center;
+    color: #475569;
+    margin-bottom: 30px;
+}
+
+/* Glass Cards */
+.card {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    padding: 18px;
+    border-radius: 16px;
+    margin: 12px 0;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+/* Colored Borders */
+.strategy { border-left: 6px solid #3b82f6; }
+.initial { border-left: 6px solid #f59e0b; }
+.eval { border-left: 6px solid #ef4444; }
+.final { border-left: 6px solid #10b981; }
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background: #0f172a;
     color: white;
 }
 
-.title {
-    font-size: 40px;
-    font-weight: 600;
-}
-
-.card {
-    background: rgba(255,255,255,0.05);
-    padding: 18px;
-    border-radius: 12px;
-    margin-top: 20px;
-    font-size: 15px;
-    line-height: 1.8;
-}
-
-.stButton>button {
-    border-radius: 10px;
-    padding: 8px 16px;
-}
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------
-# TITLE
+# 🧠 HEADER
 # ---------------------------
-st.markdown("<div class='title'>🧠 NeuroPlan AI</div>", unsafe_allow_html=True)
-st.caption("AI Planner with Feedback Optimization")
-
-# ---------------------------
-# SESSION STATE
-# ---------------------------
-if "plan" not in st.session_state:
-    st.session_state.plan = None
-
-if "refined" not in st.session_state:
-    st.session_state.refined = None
+st.markdown("<div class='title'>🧠 ReflexMind AI</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Think • Evaluate • Improve</div>", unsafe_allow_html=True)
 
 # ---------------------------
-# FORMAT FUNCTION
+# 📊 SIDEBAR
 # ---------------------------
-def format_text(text):
-    lines = text.split("\n")
-    html = ""
+st.sidebar.title("📊 ReflexMind Dashboard")
 
-    for line in lines:
-        line = line.strip()
+st.sidebar.markdown("### ⚙️ System")
+st.sidebar.write("Model: Mistral")
+st.sidebar.write("Mode: Adaptive Agent")
 
-        if line.lower().startswith("step"):
-            html += f"<h4 style='margin-top:12px;'>{line}</h4>"
-        elif line:
-            html += f"<li>{line}</li>"
+st.sidebar.markdown("### 🧠 Features")
+st.sidebar.write("✔ Strategy Selection")
+st.sidebar.write("✔ Self Evaluation")
+st.sidebar.write("✔ Improvement Loop")
 
-    return f"<ul>{html}</ul>"
-
-# ---------------------------
-# INPUT
-# ---------------------------
-goal = st.text_area("Enter your goal:")
+st.sidebar.markdown("### 🚀 Status")
+st.sidebar.success("Active")
 
 # ---------------------------
-# GENERATE PLAN
+# 💬 INPUT BOX
 # ---------------------------
-if st.button("🚀 Generate Plan"):
-
-    if goal:
-        with st.spinner("Generating plan..."):
-            st.session_state.plan = generate_plan(goal)
-            st.session_state.refined = None
+problem = st.text_area("💬 Enter your problem:", placeholder="e.g. How to prepare for exams in 5 days?")
 
 # ---------------------------
-# SHOW INITIAL PLAN
+# 🚀 RUN BUTTON
 # ---------------------------
-if st.session_state.plan:
+if st.button("🚀 Run ReflexMind"):
 
-    st.markdown(f"""
-    <div class="card" style="border-left:6px solid #f59e0b;">
-    <h4>⚙️ Initial Plan</h4>
-    {format_text(st.session_state.plan)}
-    </div>
-    """, unsafe_allow_html=True)
+    with st.spinner("🧠 Thinking..."):
+        steps, final = run_agent(problem)
 
-    # FEEDBACK
-    feedback = st.text_input("Give feedback to improve plan:")
+    strategy = steps[0][1]
+    initial = steps[1][1]
+    evaluation = steps[2][1]
 
-    if st.button("✨ Refine Plan"):
+    # ---------------------------
+    # 📦 OUTPUT CARDS
+    # ---------------------------
 
-        if feedback:
-            with st.spinner("Refining plan..."):
-                st.session_state.refined = refine_plan(
-                    goal,
-                    st.session_state.plan,
-                    feedback
-                )
+    col1, col2 = st.columns(2)
 
-# ---------------------------
-# SHOW REFINED PLAN
-# ---------------------------
-if st.session_state.refined:
+    with col1:
+        st.markdown("### 🧠 Strategy")
+        st.markdown(f"<div class='card strategy'>{strategy}</div>", unsafe_allow_html=True)
 
-    st.markdown(f"""
-    <div class="card" style="border-left:6px solid #10b981;">
-    <h4>✅ Refined Plan</h4>
-    {format_text(st.session_state.refined)}
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown("### ⚙️ Initial Solution")
+        st.markdown(f"<div class='card initial'>{initial}</div>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("### 🔍 Evaluation")
+        st.markdown(f"<div class='card eval'>{evaluation}</div>", unsafe_allow_html=True)
+
+        st.markdown("### ✅ Final Answer")
+        st.markdown(f"<div class='card final'>{final}</div>", unsafe_allow_html=True)
