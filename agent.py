@@ -24,14 +24,14 @@ def call(prompt):
 # ---------------------------
 # MAIN AGENT (SAME FLOW, BETTER QUALITY)
 # ---------------------------
-def run_neuroplan(problem):
+def run_neuroplan(problem, feedback=None):
 
     steps = []
 
     # STEP 1: Initial Solution
     initial = call(f"""
-    Solve this problem with:
-    - Clear steps
+    Solve this problem clearly:
+    - Step-by-step
     - Explanation
     - Simple language
 
@@ -39,9 +39,9 @@ def run_neuroplan(problem):
     """)
     steps.append(("⚙️ Initial Solution", initial))
 
-    # STEP 2: Evaluation (STRONGER FEEDBACK)
+    # STEP 2: Evaluation
     evaluation = call(f"""
-    Evaluate this solution deeply:
+    Evaluate this solution:
     - What is correct?
     - What is missing?
     - What can be improved?
@@ -50,29 +50,40 @@ def run_neuroplan(problem):
     """)
     steps.append(("🔍 Evaluation", evaluation))
 
-    # STEP 3: Improved Solution (SMARTER)
-    improved = call(f"""
-    Improve this solution using the feedback:
-    - Fix mistakes
-    - Add missing parts
-    - Make it more detailed
+    # STEP 3: Improvement (WITH USER FEEDBACK)
+    if feedback:
+        improved = call(f"""
+        Improve this solution using:
 
-    Original:
-    {initial}
+        User Feedback:
+        {feedback}
 
-    Feedback:
-    {evaluation}
-    """)
+        Original:
+        {initial}
+
+        Evaluation:
+        {evaluation}
+
+        Make it better, clearer, and more detailed.
+        """)
+    else:
+        improved = call(f"""
+        Improve this solution:
+
+        {initial}
+
+        Based on:
+        {evaluation}
+        """)
+
     steps.append(("✨ Improved Solution", improved))
 
-    # STEP 4: Final Answer (BEST VERSION)
+    # STEP 4: Final Answer
     final = call(f"""
-    Create final answer:
-    - Well structured
-    - Use headings
-    - Use bullet points
-    - Easy to read
-    - Complete explanation
+    Format final answer:
+    - Headings
+    - Bullet points
+    - Clear explanation
 
     {improved}
     """)
