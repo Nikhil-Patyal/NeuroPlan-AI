@@ -128,4 +128,5 @@ if st.session_state.refined:
     <h4>✅ Refined Plan</h4>
     {format_text(st.session_state.refined)}
     </div>
+    
     """, unsafe_allow_html=True)
