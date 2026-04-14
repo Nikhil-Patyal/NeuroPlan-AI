@@ -12,7 +12,7 @@ def call(prompt):
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt.strip()}],
             temperature=0.7,
-            max_tokens=2500
+            max_tokens=700
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -24,14 +24,14 @@ def call(prompt):
 # ---------------------------
 def generate_plan(goal):
     return call(f"""
-    Create a clean structured plan:
+    Create a clean and natural plan:
 
     Rules:
-    - Use headings like Step 1, Step 2
-    - Use simple bullet points
-    - NO symbols like *, +, **
-    - Each point on new line
-    - Keep it clear and readable
+    - Write like ChatGPT (clear and readable)
+    - Use headings like "Step 1", "Step 2"
+    - Add short explanation under each step
+    - Use bullet points ONLY if needed
+    - Avoid symbols like *, +, **
 
     Goal:
     {goal}
@@ -46,10 +46,11 @@ def refine_plan(goal, initial_plan, feedback):
     Improve this plan using feedback:
 
     Rules:
-    - Clean formatting
-    - Proper headings (Step 1, Step 2)
-    - Simple bullet points
-    - No symbols like *, +, **
+    - Keep it clean and natural
+    - Use headings (Step 1, Step 2)
+    - Add explanations under steps
+    - Use bullets only when needed
+    - Make it easy to read like ChatGPT
 
     Goal:
     {goal}
