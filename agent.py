@@ -20,26 +20,36 @@ def call(prompt):
 
 
 # ---------------------------
-# STEP 1: GENERATE PLAN
+# GENERATE PLAN
 # ---------------------------
 def generate_plan(goal):
     return call(f"""
-    Create a clear and structured plan:
-    - Step-by-step
-    - Easy to follow
-    - Use bullet points
-    - Add small explanations
+    Create a clean structured plan:
 
-    Goal: {goal}
+    Rules:
+    - Use headings like Step 1, Step 2
+    - Use simple bullet points
+    - NO symbols like *, +, **
+    - Each point on new line
+    - Keep it clear and readable
+
+    Goal:
+    {goal}
     """)
 
 
 # ---------------------------
-# STEP 2: REFINE PLAN
+# REFINE PLAN
 # ---------------------------
 def refine_plan(goal, initial_plan, feedback):
     return call(f"""
     Improve this plan using feedback:
+
+    Rules:
+    - Clean formatting
+    - Proper headings (Step 1, Step 2)
+    - Simple bullet points
+    - No symbols like *, +, **
 
     Goal:
     {goal}
@@ -47,12 +57,6 @@ def refine_plan(goal, initial_plan, feedback):
     Original Plan:
     {initial_plan}
 
-    User Feedback:
+    Feedback:
     {feedback}
-
-    Make it:
-    - More clear
-    - More practical
-    - Better structured
-    - More detailed
     """)

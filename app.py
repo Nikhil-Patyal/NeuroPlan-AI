@@ -4,44 +4,36 @@ from agent import generate_plan, refine_plan
 st.set_page_config(page_title="NeuroPlan AI", layout="wide")
 
 # ---------------------------
-# 🎨 MODERN UI
+# 🎨 UI STYLE
 # ---------------------------
 st.markdown("""
 <style>
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 
-html, body, [class*="css"] {
+html, body {
     font-family: 'Inter', sans-serif;
-}
-
-/* Background */
-body {
     background: linear-gradient(135deg, #0f172a, #020617);
     color: white;
 }
 
-/* Title */
 .title {
-    font-size: 42px;
+    font-size: 40px;
     font-weight: 600;
 }
 
-/* Cards */
 .card {
     background: rgba(255,255,255,0.05);
-    padding: 16px;
+    padding: 18px;
     border-radius: 12px;
     margin-top: 20px;
-    border-left: 6px solid #3b82f6;
+    font-size: 15px;
+    line-height: 1.8;
 }
 
-/* Buttons */
 .stButton>button {
     border-radius: 10px;
     padding: 8px 16px;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -59,6 +51,23 @@ if "plan" not in st.session_state:
 
 if "refined" not in st.session_state:
     st.session_state.refined = None
+
+# ---------------------------
+# FORMAT FUNCTION
+# ---------------------------
+def format_text(text):
+    lines = text.split("\n")
+    html = ""
+
+    for line in lines:
+        line = line.strip()
+
+        if line.lower().startswith("step"):
+            html += f"<h4 style='margin-top:12px;'>{line}</h4>"
+        elif line:
+            html += f"<li>{line}</li>"
+
+    return f"<ul>{html}</ul>"
 
 # ---------------------------
 # INPUT
@@ -83,18 +92,13 @@ if st.session_state.plan:
     st.markdown(f"""
     <div class="card" style="border-left:6px solid #f59e0b;">
     <h4>⚙️ Initial Plan</h4>
-    <p>{st.session_state.plan.replace("\n","<br>")}</p>
+    {format_text(st.session_state.plan)}
     </div>
     """, unsafe_allow_html=True)
 
-    # ---------------------------
-    # FEEDBACK INPUT
-    # ---------------------------
+    # FEEDBACK
     feedback = st.text_input("Give feedback to improve plan:")
 
-    # ---------------------------
-    # REFINE BUTTON
-    # ---------------------------
     if st.button("✨ Refine Plan"):
 
         if feedback:
@@ -113,6 +117,6 @@ if st.session_state.refined:
     st.markdown(f"""
     <div class="card" style="border-left:6px solid #10b981;">
     <h4>✅ Refined Plan</h4>
-    <p>{st.session_state.refined.replace("\n","<br>")}</p>
+    {format_text(st.session_state.refined)}
     </div>
     """, unsafe_allow_html=True)
