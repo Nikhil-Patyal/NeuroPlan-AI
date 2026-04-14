@@ -53,24 +53,27 @@ if "refined" not in st.session_state:
     st.session_state.refined = None
 
 # ---------------------------
-# FORMAT FUNCTION (CHATGPT STYLE)
+# FORMAT FUNCTION
 # ---------------------------
 def format_text(text):
+    # remove unwanted symbols if model still gives them
+    text = text.replace("**", "").replace("*", "")
+
     lines = text.split("\n")
     html = ""
 
     for line in lines:
         line = line.strip()
 
-        # STEP HEADINGS
+        # Step headings
         if line.lower().startswith("step"):
             html += f"<h3 style='margin-top:20px; color:#38bdf8;'>{line}</h3>"
 
-        # BULLETS (only if present)
+        # bullets
         elif line.startswith("-"):
             html += f"<li>{line[1:].strip()}</li>"
 
-        # NORMAL TEXT
+        # normal text
         elif line:
             html += f"<p style='margin:6px 0;'>{line}</p>"
 
